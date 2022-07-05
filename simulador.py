@@ -40,11 +40,10 @@ class ArtificialDataBaseCreator(threading.Thread):
         #considerar primer caso
         self.download_db()
         first_index = self.df[self.df.date > self.init_date].index[0]
-        index = first_index
+        index = first_index + 1
 
         #init loop
         while self.df.loc[index].date < self.end_date:           
-
 
             self.update_db_art(first_index, index)
 
@@ -53,6 +52,8 @@ class ArtificialDataBaseCreator(threading.Thread):
             self.event_turn_of_db.clear()
 
             index += 1
+
+            
 
 
 
@@ -83,9 +84,13 @@ event_turn_of_db = threading.Event()
 
 #instanciar clases de otros modulos
 logic_money = main.LogicMoney(pr.artificial_db_location, event_turn_of_db, event_turn_of_logic, daemon= True)
-art_db_creator = ArtificialDataBaseCreator(pr.initial_date, pr.final_date, event_turn_of_db, event_turn_of_logic)
+art_db_creator = ArtificialDataBaseCreator(pr.initial_date, pr.final_date, event_turn_of_db, event_turn_of_logic, daemon=True)
 
 
 #comenzar los Threads
 logic_money.start()
 art_db_creator.start()
+
+
+art_db_creator.join()
+print("fin del programa")
