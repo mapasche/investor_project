@@ -14,8 +14,9 @@ class LogicMoney(threading.Thread):
         self.event_turn_of_db = event_turn_of_db
         self.event_turn_of_logic = event_turn_of_logic
         #self.wallet = Wallet()
-        self.model = md.Oscilations()
         self.info_base = InfoBase()
+        self.model = md.Oscilations(self.info_base)
+        
 
 
     def run(self):
@@ -27,7 +28,7 @@ class LogicMoney(threading.Thread):
 
             self.download_db()
 
-            action, amount, exchange_price = self.model.evaluate(self.df)
+            action, amount, exchange_price = self.model.evaluate()
 
             if action == "buy":
                 self.buy_coin(amount, exchange_price)
@@ -49,8 +50,7 @@ class LogicMoney(threading.Thread):
 
     def download_db(self):
         self.info_base.df = pd.read_csv(pr.artificial_db_location)
-        self.info_base.df.date = pd.to_datetime(self.df.date)
-        return self.df
+        return self.info_base.df
 
 
 

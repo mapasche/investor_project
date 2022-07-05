@@ -50,6 +50,7 @@ class InfoWallet(Wallet):
         super().__init__(*args, **kwargs)
 
         self.have_coin = False
+        self.have_dolar = False
         self.last_bought_price = 0
         self.high_threshold = 0
         #self.comprar_vender = False
@@ -61,6 +62,11 @@ class InfoWallet(Wallet):
             self.have_coin = True
         else:
             self.have_coin = False
+        
+        if self.amount_dolar > pr.epsilon:
+            self.have_dolar = True
+        else:
+            self.have_dolar = False
 
 
     def buy_coin(self, exchange_price, amount_dolar = -1):
@@ -105,28 +111,72 @@ class InfoBase:
         
         self.wallets = [InfoWallet(amount_dolar_initially)]
         self.have_coin = False
-        self.df = None
+        self.__df = None
+        self.low_threshold = None
+        self.last_exchange_price = 0
 
+    @df
+    def df(self):
+        return self.__df
+
+    @setter.df
+    def df(self, value):
+        if not type(value) == pd.core.frame.DataFrame:
+            print("MEGA ERROR, el df que estas intentando setter en el INFOBASE no es dataframe")
+
+        self.__df = value
+        self.__df = pd.to_datetime(self.__df.date)
+        self.set_last_exchange_price()
     
+
+    def total_money (self):
+
+        if precio == 0:
+            precio  = self.df.iloc[-1,].Price
+        self.dinero_total = self.dinero + self.crypto * precio
 
     def set_low_threshold (self):
 
-        if type_of_low_threshold == "average":
+        if pr.type_of_low_thrseshold == "average":
             self.confirm_have_coin()
 
             if self.have_coin:
                 #obtener el valor mas bajo comprado en las wallets
                 pass
+                
+                ###############################################
+                #### Por ahora los dos casos serán iguales ####
+                ###############################################
+                last_date = last_date()
+                mean = mean_in_dates(last_date - pr.time_backwards_of_low_threshold_analysis, last_date)
+                low_threshold = mean - mean * pr.interest_percent / 100
+                for wallet in self.wallets:
+                    wallet.low_threshold = low_threshold
+                ###############################################
+
             else:
                 #obtener el promedio
-                pass
+                last_date = last_date()
+                mean = mean_in_dates(last_date - pr.time_backwards_of_low_threshold_analysis, last_date)
+
+                low_threshold = mean - mean * pr.interest_percent / 100
+                for wallet in self.wallets:
+                    wallet.low_threshold = low_threshold
+
+    def set_last_exchange_price (self):
+        try:
+            self.last_exchange_price = self.df.iloc[-1].price
+        except Exception as e:
+            return e
     
     def mean_in_dates (self, init_date, last_date = dt.datetime.now()):
         try:
-            return self.df.loc[(last_date >= self.df.date) & (self.df.date >= init_date)]["price"].mean()
+            return round(self.df.loc[(last_date >= self.df.date) & (self.df.date >= init_date)]["price"].mean(), 4)
         except Exception as e:
             return e
 
+    def last_date (self):
+        return self.df.iloc[-1].date
 
     def confirm_have_coin (self):
 
@@ -134,6 +184,8 @@ class InfoBase:
             if wallet.have_coin:
                 self.have_coin = True
                 break
+        
+        self.have_coin = False
 
 
 
