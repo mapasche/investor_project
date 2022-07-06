@@ -58,7 +58,6 @@ class InfoWallet(Wallet):
         self.low_threshold = 0
         self.last_bought_price = -1
 
-
     def confirm_have_coin(self):
         if self.amount_coin > pr.epsilon:
             self.have_coin = True
@@ -139,13 +138,11 @@ class InfoBase:
             total += wallet.amount_dolar
         self.total_dolar = total
 
-
     def set_total_coin (self):
         total = 0
         for wallet in self.wallets:
             total += wallet.amount_coin
         self.total_coin = total
-
 
     def set_last_exchange_price (self):
         try:
@@ -172,6 +169,8 @@ class InfoBase:
         
         self.have_coin = False
 
+    def lowest_threshold (self):  
+        return min(self.wallets, key= lambda x: x.low_threshold).low_threshold
 
 
 

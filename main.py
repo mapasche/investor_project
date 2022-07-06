@@ -36,6 +36,8 @@ class LogicMoney(threading.Thread):
                 self.info_base.set_total_money()
                 self.upload_action_to_history(action)
 
+            self.upload_graph_info()
+
             #Manda event
             self.event_turn_of_db.set()  
 
@@ -58,6 +60,19 @@ class LogicMoney(threading.Thread):
             for i, wallet in enumerate(self.info_base.wallets):
                 archive.write(f"Wallet {i}: \t Dolar: {round(self.info_base.total_dolar, 4)} \t Coin: {round(self.info_base.total_coin, 4)}\n")
             archive.write(f"\n\n")
+
+        
+    def upload_graph_info (self):
+        last_date = self.info_base.last_date()
+        initial_date = last_date - pr.time_backwards_of_low_threshold_analysis
+
+        last_date = self.info_base.last_date()
+        mean = self.info_base.mean_in_dates(initial_date, last_date)
+        lowest_threshold = self.info_base.lowest_threshold()
+
+        with open(pr.graph_info_location, "a", encoding="utf-8") as archive:
+            archive.write(f"{last_date},{mean},{lowest_threshold}\n")
+
 
 
 

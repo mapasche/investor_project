@@ -3,6 +3,7 @@ import pandas as pd
 import threading
 import main
 import datetime as dt
+from functions import *
 from copy import deepcopy
 
 
@@ -37,25 +38,29 @@ class ArtificialDataBaseCreator(threading.Thread):
         self.df_art.to_csv(pr.artificial_db_location,index=None)
 
 
+        #Create grahp info db
+        data_2 = {'date' : [], 'average' : [], 'low_threshold' : []}
+        df_graph_info = pd.DataFrame(data_2)
+        df_graph_info.date = pd.to_datetime(df_graph_info.date)
+        df_graph_info.to_csv(pr.graph_info_location, index=None)
+
+
         #considerar primer caso
         self.download_db()
         first_index = self.df[self.df.date > self.init_date].index[0]
+        index_start_art_db = self.df[self.df.date > self.init_date - pr.time_backwards_for_art_db].index[0]
         index = first_index + 1
 
         #init loop
         while self.df.loc[index].date < self.end_date:           
 
-            self.update_db_art(first_index, index)
+            self.update_db_art(index_start_art_db, index)
 
             self.event_turn_of_logic.set()
             self.event_turn_of_db.wait()
             self.event_turn_of_db.clear()
 
             index += 1
-
-            
-
-
 
 
     def download_db (self):
@@ -93,4 +98,10 @@ art_db_creator.start()
 
 
 art_db_creator.join()
+
+
+
+#imprimir gráficos con la información
+show_final_graph()
+
 print("fin del programa")

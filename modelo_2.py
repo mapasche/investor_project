@@ -37,7 +37,9 @@ class Oscilations:
                 initial_date = last_date - pr.time_backwards_of_low_threshold_analysis
 
                 mean = self.info_base.mean_in_dates(initial_date, last_date)
-                low_threshold = mean - mean * pr.interest_percent / 100
+                print(f"mean: {mean}")
+
+                low_threshold = round(mean - mean * pr.interest_percent / 100, 4)
                 for wallet in self.info_base.wallets:
                     wallet.low_threshold = low_threshold
                 ###############################################
@@ -48,8 +50,9 @@ class Oscilations:
                 initial_date = last_date - pr.time_backwards_of_low_threshold_analysis
 
                 mean = self.info_base.mean_in_dates(initial_date, last_date)
+                print(f"mean: {mean}")
 
-                low_threshold = mean - mean * pr.interest_percent / 100
+                low_threshold = round(mean - mean * pr.interest_percent / 100, 4)
                 for wallet in self.info_base.wallets:
                     wallet.low_threshold = low_threshold
 
@@ -62,8 +65,7 @@ class Oscilations:
 
     def evaluate (self):
 
-        if pr.type_of_low_threshold == "average":
-            
+        if pr.type_of_low_threshold == "average":           
 
 
             ################################################################
@@ -84,8 +86,9 @@ class Oscilations:
                 
 
 
-
-            for wallet in self.info_base.wallets:
+            print(f"Last exchange price: {last_exchange_price}")
+            for i, wallet in enumerate(self.info_base.wallets):
+                print(f"wallet {i} low threshold: {wallet.low_threshold}")
 
                 if wallet.low_threshold > last_exchange_price:
 
@@ -110,7 +113,7 @@ class Oscilations:
                         
                         return "sell"
         
-        
+        print()
         #si pasa nada
         return None
 
