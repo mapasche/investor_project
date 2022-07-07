@@ -17,42 +17,43 @@ def dolar_2_coin(amount_dolar, market_price_in_dolar):
 
 def show_final_graph():
 
+    figure, axs = plt.subplots(2, 1, figsize = (10, 10))
+
     #descargamos la informacion
     df = pd.read_csv(pr.artificial_db_location)
     df.date = pd.to_datetime(df.date)
-
-    df_graph = pd.read_csv(pr.graph_info_location)
+    df_graph = pd.read_csv("resultados/graph_info.csv")
     df_graph.date = pd.to_datetime(df_graph.date)
-
+    df_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+    df_buy_sell.date = pd.to_datetime(df_buy_sell.date)
     init_date = df.date.iloc[0]
     last_date = df.date.iloc[-1]
 
 
-    plot_size()
-    plot_labels()
+    axs[0].plot_date(x = df.date, y = df.price, linestyle='-', markersize = 0.01, label="Price")
+    axs[0].plot_date(x= df_graph.date, y = df_graph.average, linestyle='-', markersize = 0.01, label="MA")
+    axs[0].plot_date(x= df_graph.date, y = df_graph.low_threshold, linestyle='-', markersize = 0.01, label="MA - Interest")
+    setear_visualizador_eje_x(axs[0], init_date, last_date)
 
-    plt.plot_date(x = df.date, y = df.price, linestyle='-', markersize = 0.01)
-    plt.plot_date(x= df_graph.date, y = df_graph.average, linestyle='-', markersize = 0.01)
-    plt.plot_date(x= df_graph.date, y = df_graph.low_threshold, linestyle='-', markersize = 0.01)
+    axs[1].plot_date(x= df.date, y = df.volume, linestyle='-', color="purple", markersize = 0.01, label="volumen")
+    axs_1v2 = axs[1].twinx()
+    axs_1v2.plot_date(x= df.date, y = df.trades, linestyle='-', color="gray", markersize = 0.1, label="trades")
+    setear_visualizador_eje_x(axs[1], init_date, last_date)
 
-    #plot buy and sell transactions
     #vertical lines of buy and sell
-    df_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
-    df_buy_sell.date = pd.to_datetime(df_buy_sell.date)
-    df_buy_sell.apply(lambda row: plt.axvline(x=row.date, linewidth=0.8, color="red") if row.action == "buy" else plt.axvline(x=row.date, linewidth=0.8, color="green") , axis=1)
+    df_buy_sell.apply(lambda row: axs[0].axvline(x=row.date, linewidth=1, color="red") if row.action == "buy" else axs[0].axvline(x=row.date, linewidth=1, color="green") , axis=1)
 
 
-    ax = plt.gca()
-    setear_visualizador_eje_x(ax, init_date, last_date)
+    axs[0].grid(True)
+    axs[1].grid(True)
 
-    plt.grid(True)
 
     #legends
     #fig = plt.gcf()
-    #fig.legend(loc=1)
-    #fig.legend(loc="best")
-    #fig.tight_layout()
+    figure.legend(loc=1)
+    figure.tight_layout()
     #plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+
     plot_save(pr.graph_location)
     plt.show()
 

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt 
 import pandas as pd
 import numpy as np
-import json
 import statsmodels.api as sm
 import datetime as dt
+from copy import deepcopy
 from matplotlib.dates import date2num, HourLocator, MinuteLocator, DayLocator, MonthLocator
 from sklearn.preprocessing import PolynomialFeatures
 
@@ -56,12 +56,31 @@ class Oscilations:
                 for wallet in self.info_base.wallets:
                     wallet.low_threshold = low_threshold
 
-
-
     def high_threshold_calculator (self, type_threshold, last_exchange_price):
         if type_threshold == "average":
             return last_exchange_price + last_exchange_price * pr.interest_percent / 100 * 2.2
     
+
+    def curve_regression(self, init_date, last_date):
+        data = deepcopy(self.info_base.df.loc[(last_date >= self.info_base.df.date) & (init_date <= self.info_base.df.date)])
+        data['time'] = np.arange(len(data.date))
+        
+        polynomial_features = PolynomialFeatures(degree = 2)
+        X = data.loc[:, ['time']]
+        X.dropna(inplace = True)
+        X = polynomial_features.fit_transform(X)
+        X = sm.add_constant(X)
+        y = data.loc[:, 'price']
+
+        #train en ordinary least square
+        model = sm.OLS(y, X)
+        results = model.fit()
+        return results
+        
+        
+
+
+
 
     def evaluate (self):
 
@@ -78,30 +97,34 @@ class Oscilations:
             #
             ################################################################ 
             last_exchange_price = self.info_base.last_exchange_price
-
+            last_date = self.info_base.last_date()
 
 
             #set lowthreshold
             self.set_low_threshold_in_wallets(pr.type_of_low_threshold)
-                
 
 
-            print(f"Last exchange price: {last_exchange_price}")
+            #results OLS degree 2.  el acompañador del x2 es el params[2]
+            results_OLS_2 = self.curve_regression(last_date - pr.time_backwards_of_cond_low_high_curve_regression, last_date)
+            curve_regression_x2_value = results_OLS_2.params[2]
+
+
+            #print(f"Last exchange price: {last_exchange_price}")
             for i, wallet in enumerate(self.info_base.wallets):
-                print(f"wallet {i} low threshold: {wallet.low_threshold}  amount dolar: {wallet.amount_dolar}")
+                #print(f"wallet {i} low threshold: {wallet.low_threshold}  amount dolar: {wallet.amount_dolar}")
 
                 if wallet.low_threshold > last_exchange_price:
 
                     if wallet.have_dolar:
 
-                        wallet.buy_coin(last_exchange_price)
+                        if curve_regression_x2_value > pr.min_value_x2_curve_regression:
 
-                        #set highthreshold
-                        wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
-                        print("Buy")
-                        print("---------------------------------------------------------------------")
+                            wallet.buy_coin(last_exchange_price)
 
-                        return "buy"
+                            #set highthreshold
+                            wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
+
+                            return "buy"
 
 
             
@@ -109,12 +132,12 @@ class Oscilations:
 
                     if wallet.have_coin:
 
-                        wallet.sell_coin(last_exchange_price)
-                        print("Sell")
-                        
-                        return "sell"
+                        if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
+
+                            wallet.sell_coin(last_exchange_price)
+                            
+                            return "sell"
         
-        print()
         #si pasa nada
         return None
 

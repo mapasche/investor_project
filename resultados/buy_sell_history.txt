@@ -1,15 +1,50 @@
-Action: buy 	 Total money: 99.9 	 Date: 2022-07-06 13:11:06
+Action: buy 	 Total money: 99.9 	 Date: 2022-07-06 13:23:41
 Total dolar: 0 	 Total coin: 0.0049
 Wallet 0: 	 Dolar: 0 	 Coin: 0.0049
 
 
-Action: sell 	 Total money: 100.02779793908579 	 Date: 2022-07-06 14:34:10
-Total dolar: 100.0278 	 Total coin: 0.0
-Wallet 0: 	 Dolar: 100.0278 	 Coin: 0.0
+Action: sell 	 Total money: 100.04791967059433 	 Date: 2022-07-06 14:38:21
+Total dolar: 100.0479 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.0479 	 Coin: 0.0
 
 
-Action: buy 	 Total money: 99.92777014114668 	 Date: 2022-07-06 15:49:19
+Action: buy 	 Total money: 99.94787175092372 	 Date: 2022-07-06 15:55:37
 Total dolar: 0.0 	 Total coin: 0.0049
 Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 100.07977492219135 	 Date: 2022-07-06 16:11:16
+Total dolar: 100.0798 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.0798 	 Coin: 0.0
+
+
+Action: buy 	 Total money: 99.97969514726915 	 Date: 2022-07-06 16:24:49
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 100.42815534884025 	 Date: 2022-07-06 17:01:39
+Total dolar: 100.4282 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.4282 	 Coin: 0.0
+
+
+Action: buy 	 Total money: 100.3277271934914 	 Date: 2022-07-06 22:29:25
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 100.49350405851047 	 Date: 2022-07-07 04:57:45
+Total dolar: 100.4935 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.4935 	 Coin: 0.0
+
+
+Action: buy 	 Total money: 100.39301055445196 	 Date: 2022-07-07 08:21:01
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 100.60471607479646 	 Date: 2022-07-07 09:52:39
+Total dolar: 100.6047 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.6047 	 Coin: 0.0
 
 

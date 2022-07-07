@@ -1,0 +1,43 @@
+Params: time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=20)
+
+Action: buy 	 Total money: 100.39301055445196 	 Date: 2022-07-07 08:21:01
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 100.60471607479646 	 Date: 2022-07-07 09:52:39
+Total dolar: 100.6047 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 100.6047 	 Coin: 0.0
+
+
+
+
+
+
+Params: time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=15)
+
+Action: buy 	 Total money: 100.70789556321975 	 Date: 2022-07-07 08:29:19
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 101.07472091542671 	 Date: 2022-07-07 09:51:37
+Total dolar: 101.0747 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 101.0747 	 Coin: 0.0
+
+
+
+
+
+
+
+Params: time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=10)
+
+Action: buy 	 Total money: 100.84734232455509 	 Date: 2022-07-07 08:26:12
+Total dolar: 0.0 	 Total coin: 0.0049
+Wallet 0: 	 Dolar: 0.0 	 Coin: 0.0049
+
+
+Action: sell 	 Total money: 101.36214450318663 	 Date: 2022-07-07 09:49:32
+Total dolar: 101.3621 	 Total coin: 0.0
+Wallet 0: 	 Dolar: 101.3621 	 Coin: 0.0

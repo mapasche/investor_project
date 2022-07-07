@@ -12,7 +12,7 @@ graph_location = "resultados/graph.png"
 
 #año - mes - dia - hora - minuto
 initial_date = dt.datetime(2022, 7, 6, 12)
-final_date = dt.datetime(2022, 7, 6, 16)
+final_date = dt.datetime(2022, 7, 7, 12)
 
 
 
@@ -31,6 +31,8 @@ epsilon = 0.0000001
 
 type_of_low_threshold = "average"
 time_backwards_of_low_threshold_analysis = dt.timedelta(hours=5)
+time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=20)
+min_value_x2_curve_regression = 0.001
 
 
 
