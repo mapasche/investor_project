@@ -35,6 +35,12 @@ def show_final_graph():
     plt.plot_date(x= df_graph.date, y = df_graph.average, linestyle='-', markersize = 0.01)
     plt.plot_date(x= df_graph.date, y = df_graph.low_threshold, linestyle='-', markersize = 0.01)
 
+    #plot buy and sell transactions
+    #vertical lines of buy and sell
+    df_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+    df_buy_sell.date = pd.to_datetime(df_buy_sell.date)
+    df_buy_sell.apply(lambda row: plt.axvline(x=row.date, linewidth=0.8, color="red") if row.action == "buy" else plt.axvline(x=row.date, linewidth=0.8, color="green") , axis=1)
+
 
     ax = plt.gca()
     setear_visualizador_eje_x(ax, init_date, last_date)

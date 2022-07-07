@@ -7,11 +7,12 @@ db_location = "datos/info.csv"
 artificial_db_location = "datos/info_art.csv"
 buy_sell_history_location = "resultados/buy_sell_history.txt"
 graph_info_location = "resultados/graph_info.csv"
+graph_info_buy_sell_location = "resultados/graph_info_buy_sell.csv"
 graph_location = "resultados/graph.png"
 
 #año - mes - dia - hora - minuto
 initial_date = dt.datetime(2022, 7, 6, 12)
-final_date = dt.datetime(2022, 7, 6, 23)
+final_date = dt.datetime(2022, 7, 6, 16)
 
 
 

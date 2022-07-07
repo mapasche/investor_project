@@ -54,12 +54,22 @@ class LogicMoney(threading.Thread):
         return self.info_base.df
 
     def upload_action_to_history (self, action):
+        last_date = self.info_base.last_date()
         with open(pr.buy_sell_history_location, "a", encoding="utf-8") as archive:
-            archive.write(f"Action: {action} \t Total money: {self.info_base.total_money}\n")
+            archive.write(f"Action: {action} \t Total money: {self.info_base.total_money} \t Date: {last_date}\n")
             archive.write(f"Total dolar: {round(self.info_base.total_dolar, 4)} \t Total coin: {round(self.info_base.total_coin, 4)}\n")
             for i, wallet in enumerate(self.info_base.wallets):
                 archive.write(f"Wallet {i}: \t Dolar: {round(self.info_base.total_dolar, 4)} \t Coin: {round(self.info_base.total_coin, 4)}\n")
             archive.write(f"\n\n")
+
+        #send the information to graph
+        df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+        df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
+        new_data = {'date' : [last_date], 'action' : [action]}
+        append_df = pd.DataFrame(new_data)
+        append_df.date = pd.to_datetime(append_df.date)
+        df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
+        df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
 
         
     def upload_graph_info (self):

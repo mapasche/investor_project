@@ -38,7 +38,7 @@ class ArtificialDataBaseCreator(threading.Thread):
         self.df_art.to_csv(pr.artificial_db_location,index=None)
 
 
-        #Create grahp info db
+        #Create graph info db
         data_2 = {'date' : [], 'average' : [], 'low_threshold' : []}
         df_graph_info = pd.DataFrame(data_2)
         df_graph_info.date = pd.to_datetime(df_graph_info.date)
@@ -48,6 +48,12 @@ class ArtificialDataBaseCreator(threading.Thread):
         #Erase data in buy sell history
         with open(pr.buy_sell_history_location, "w", encoding="utf-8") as archive:
             archive.write("")
+        
+        #Create graph info buy sell
+        data_3 = {'date' : [], 'action' : []}
+        df_graph_info_3 = pd.DataFrame(data_3)
+        df_graph_info_3.date = pd.to_datetime(df_graph_info_3.date)
+        df_graph_info_3.to_csv(pr.graph_info_buy_sell_location, index=None)
 
 
         #considerar primer caso
