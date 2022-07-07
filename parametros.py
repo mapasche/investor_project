@@ -9,8 +9,9 @@ buy_sell_history_location = "resultados/buy_sell_history.txt"
 graph_info_location = "resultados/graph_info.csv"
 graph_location = "resultados/graph.png"
 
-initial_date = dt.datetime(2022, 7, 5, 14)
-final_date = dt.datetime(2022, 7, 5, 17)
+#año - mes - dia - hora - minuto
+initial_date = dt.datetime(2022, 7, 6, 12)
+final_date = dt.datetime(2022, 7, 6, 23)
 
 
 
@@ -20,7 +21,7 @@ final_date = dt.datetime(2022, 7, 5, 17)
 
 time_backwards_for_art_db = dt.timedelta(hours=6)
 
-epsilon = 0.01
+epsilon = 0.0000001
 
 
 

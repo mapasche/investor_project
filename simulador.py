@@ -45,6 +45,11 @@ class ArtificialDataBaseCreator(threading.Thread):
         df_graph_info.to_csv(pr.graph_info_location, index=None)
 
 
+        #Erase data in buy sell history
+        with open(pr.buy_sell_history_location, "w", encoding="utf-8") as archive:
+            archive.write("")
+
+
         #considerar primer caso
         self.download_db()
         first_index = self.df[self.df.date > self.init_date].index[0]
@@ -71,13 +76,6 @@ class ArtificialDataBaseCreator(threading.Thread):
     def update_db_art (self, first_index, second_index):
         self.df_art = deepcopy(self.df.iloc[first_index:second_index])
         self.df_art.to_csv(pr.artificial_db_location, index = None)
-
-
-
-
-
-
-
 
 
 

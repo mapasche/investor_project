@@ -7,7 +7,7 @@ import datetime as dt
 from matplotlib.dates import date2num, HourLocator, MinuteLocator, DayLocator, MonthLocator
 from sklearn.preprocessing import PolynomialFeatures
 
-import parametros
+import parametros as pr
 from classes import *
 from functions import *
 
@@ -88,7 +88,7 @@ class Oscilations:
 
             print(f"Last exchange price: {last_exchange_price}")
             for i, wallet in enumerate(self.info_base.wallets):
-                print(f"wallet {i} low threshold: {wallet.low_threshold}")
+                print(f"wallet {i} low threshold: {wallet.low_threshold}  amount dolar: {wallet.amount_dolar}")
 
                 if wallet.low_threshold > last_exchange_price:
 
@@ -99,6 +99,7 @@ class Oscilations:
                         #set highthreshold
                         wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
                         print("Buy")
+                        print("---------------------------------------------------------------------")
 
                         return "buy"
 

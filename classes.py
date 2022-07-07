@@ -1,5 +1,9 @@
+from functions import *
+
 import datetime as dt
 import pandas as pd
+import parametros as pr
+
 
 class Wallet:
     def __init__(self, amount_dolar = 0):
@@ -29,7 +33,7 @@ class Wallet:
         elif setter < 0:
             self.__amount_dolar = 0
         else:
-            self.__amount_dolar = round(setter, 5)
+            self.__amount_dolar = setter
 
     @property
     def amount_coin (self):
@@ -42,7 +46,7 @@ class Wallet:
         elif setter < 0:
             self.__amount_coin = 0
         else:
-            self.__amount_coin = round(setter, 2)
+            self.__amount_coin = setter
 
 
 
@@ -57,6 +61,7 @@ class InfoWallet(Wallet):
         #self.comprar_vender = False
         self.low_threshold = 0
         self.last_bought_price = -1
+        self.confirm_have_coin()
 
     def confirm_have_coin(self):
         if self.amount_coin > pr.epsilon:
