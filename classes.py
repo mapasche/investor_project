@@ -80,7 +80,10 @@ class InfoWallet(Wallet):
             amount_dolar = self.amount_dolar
 
         #aplicamos interes
-        amount_dolar_with_interest = amount_dolar - amount_dolar * pr.interest_percent / 100
+        if pr.with_interest:
+            amount_dolar_with_interest = amount_dolar - amount_dolar * pr.interest_percent / 100
+        else:
+            amount_dolar_with_interest = amount_dolar
         
         amount_coin = dolar_2_coin(amount_dolar_with_interest, exchange_price)
         self.amount_dolar -= amount_dolar
@@ -95,7 +98,10 @@ class InfoWallet(Wallet):
             amount_coin = self.amount_coin
         
         #aplicamos interes
-        amount_coin_with_interest = amount_coin - amount_coin * pr.interest_percent / 100
+        if pr.with_interest:
+            amount_coin_with_interest = amount_coin - amount_coin * pr.interest_percent / 100
+        else:
+            amount_coin_with_interest = amount_coin
 
         amount_dolar = coin_2_dolar(amount_coin_with_interest, exchange_price)
         self.amount_dolar += amount_dolar

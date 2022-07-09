@@ -1,6 +1,8 @@
 import datetime as dt
 
 interest_percent = 0.1
+with_interest = False
+graph_with_volume = False
 
 #location of archives
 db_location = "datos/info.csv"
@@ -12,7 +14,7 @@ graph_location = "resultados/graph.png"
 
 #año - mes - dia - hora - minuto
 initial_date = dt.datetime(2022, 7, 6, 12)
-final_date = dt.datetime(2022, 7, 7, 12)
+final_date = dt.datetime(2022, 7, 8, 12)
 
 
 
@@ -21,7 +23,6 @@ final_date = dt.datetime(2022, 7, 7, 12)
 
 
 time_backwards_for_art_db = dt.timedelta(hours=6)
-
 epsilon = 0.0000001
 
 
@@ -30,9 +31,10 @@ epsilon = 0.0000001
 #parameters model of oscilations
 
 type_of_low_threshold = "average"
-time_backwards_of_low_threshold_analysis = dt.timedelta(hours=5)
-time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=20)
-min_value_x2_curve_regression = 0.001
+low_threshold_amplifier = 2
+time_backwards_of_low_threshold_analysis = dt.timedelta(hours = 1)
+min_value_x2_curve_regression = 0.01
+time_backwards_of_cond_low_high_curve_regression = dt.timedelta(minutes=5)
 
 
 

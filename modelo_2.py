@@ -39,7 +39,7 @@ class Oscilations:
                 mean = self.info_base.mean_in_dates(initial_date, last_date)
                 print(f"mean: {mean}")
 
-                low_threshold = round(mean - mean * pr.interest_percent / 100, 4)
+                low_threshold = round(mean - mean * pr.interest_percent * pr.low_threshold_amplifier / 100, 4)
                 for wallet in self.info_base.wallets:
                     wallet.low_threshold = low_threshold
                 ###############################################
@@ -52,7 +52,7 @@ class Oscilations:
                 mean = self.info_base.mean_in_dates(initial_date, last_date)
                 print(f"mean: {mean}")
 
-                low_threshold = round(mean - mean * pr.interest_percent / 100, 4)
+                low_threshold = round(mean - mean * pr.interest_percent * pr.low_threshold_amplifier / 100, 4)
                 for wallet in self.info_base.wallets:
                     wallet.low_threshold = low_threshold
 
@@ -60,7 +60,6 @@ class Oscilations:
         if type_threshold == "average":
             return last_exchange_price + last_exchange_price * pr.interest_percent / 100 * 2.2
     
-
     def curve_regression(self, init_date, last_date):
         data = deepcopy(self.info_base.df.loc[(last_date >= self.info_base.df.date) & (init_date <= self.info_base.df.date)])
         data['time'] = np.arange(len(data.date))
@@ -99,21 +98,91 @@ class Oscilations:
             last_exchange_price = self.info_base.last_exchange_price
             last_date = self.info_base.last_date()
 
+            #results OLS degree 2.  el acompañador del x2 es el params[2]
+            results_OLS_2 = self.curve_regression(last_date - pr.time_backwards_of_cond_low_high_curve_regression, last_date)
+            curve_regression_x2_value = results_OLS_2.params[2]
 
             #set lowthreshold
             self.set_low_threshold_in_wallets(pr.type_of_low_threshold)
 
 
-            #results OLS degree 2.  el acompañador del x2 es el params[2]
-            results_OLS_2 = self.curve_regression(last_date - pr.time_backwards_of_cond_low_high_curve_regression, last_date)
-            curve_regression_x2_value = results_OLS_2.params[2]
+            #si es que estamos considerando interes
+            if pr.with_interest:
 
 
-            #print(f"Last exchange price: {last_exchange_price}")
-            for i, wallet in enumerate(self.info_base.wallets):
-                #print(f"wallet {i} low threshold: {wallet.low_threshold}  amount dolar: {wallet.amount_dolar}")
+                #print(f"Last exchange price: {last_exchange_price}")
+                for i, wallet in enumerate(self.info_base.wallets):
+                    #print(f"wallet {i} low threshold: {wallet.low_threshold}  amount dolar: {wallet.amount_dolar}")
 
-                if wallet.low_threshold > last_exchange_price:
+                    if wallet.low_threshold > last_exchange_price:
+
+                        if wallet.have_dolar:
+
+                            if curve_regression_x2_value > pr.min_value_x2_curve_regression:
+
+                                wallet.buy_coin(last_exchange_price)
+
+                                #set highthreshold
+                                wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
+
+
+                                #send the information to graph
+                                df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+                                df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
+                                new_data = {'date' : [last_date], 'action' : ["buy"], "param0" : [results_OLS_2.params[0]], "param1" : [results_OLS_2.params[2]], "param2" : [results_OLS_2.params[2]]}
+                                append_df = pd.DataFrame(new_data)
+                                append_df.date = pd.to_datetime(append_df.date)
+                                df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
+                                df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
+
+                                return "buy"
+
+
+                
+                    elif wallet.high_threshold < last_exchange_price:
+
+                        if wallet.have_coin:
+
+                            if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
+
+                                wallet.sell_coin(last_exchange_price)
+
+
+                                df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+                                df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
+                                new_data = {'date' : [last_date], 'action' : ["sell"], "param0" : [results_OLS_2.params[0]], "param1" : [results_OLS_2.params[2]], "param2" : [results_OLS_2.params[2]]}
+                                append_df = pd.DataFrame(new_data)
+                                append_df.date = pd.to_datetime(append_df.date)
+                                df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
+                                df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
+                                
+                                return "sell"
+
+
+
+                    """elif wallet.last_bought_price - wallet.last_bought_price * pr.interest_percent / 100 > last_exchange_price:
+
+                        if wallet.have_coin:
+                            
+                            wallet.sell_coin(last_exchange_price)
+
+
+                            df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
+                            df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
+                            new_data = {'date' : [last_date], 'action' : ["sell"], "param0" : [results_OLS_2.params[0]], "param1" : [results_OLS_2.params[2]], "param2" : [results_OLS_2.params[2]]}
+                            append_df = pd.DataFrame(new_data)
+                            append_df.date = pd.to_datetime(append_df.date)
+                            df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
+                            df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
+
+                            return "sell"""
+            
+
+            #sin interes ----------------------------------------------------------------------------------------------
+            else:
+
+
+                for i, wallet in enumerate(self.info_base.wallets):
 
                     if wallet.have_dolar:
 
@@ -121,23 +190,47 @@ class Oscilations:
 
                             wallet.buy_coin(last_exchange_price)
 
-                            #set highthreshold
-                            wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
+                            #send the information to graph
+                            send_information_2_graph(action = "buy", results_x2 = results_OLS_2, last_date = last_date)
 
                             return "buy"
 
 
-            
-                elif wallet.high_threshold < last_exchange_price:
+                
+                    elif wallet.high_threshold < last_exchange_price:
 
-                    if wallet.have_coin:
+                        if wallet.have_coin:
 
-                        if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
+                            if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
 
-                            wallet.sell_coin(last_exchange_price)
+                                wallet.sell_coin(last_exchange_price)
+                                
+                                #send the information to graph
+                                send_information_2_graph(action = "sell", results_x2 = results_OLS_2, last_date = last_date)
+                                
+                                return "sell"
+
+
+
+                    elif wallet.last_bought_price - wallet.last_bought_price * pr.interest_percent / 100 > last_exchange_price:
+
+                        if wallet.have_coin:
                             
-                            return "sell"
-        
+                            wallet.sell_coin(last_exchange_price)
+
+                            #send the information to graph
+                            send_information_2_graph(action = "sell", results_x2 = results_OLS_2, last_date = last_date)
+
+                            return "sell"""                
+
+
+
+
+
+
+
+
+
         #si pasa nada
         return None
 

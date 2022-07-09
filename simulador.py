@@ -50,7 +50,7 @@ class ArtificialDataBaseCreator(threading.Thread):
             archive.write("")
         
         #Create graph info buy sell
-        data_3 = {'date' : [], 'action' : []}
+        data_3 = {'date' : [], 'action' : [], "param1" : [], "param2" : [], "param3" : []}
         df_graph_info_3 = pd.DataFrame(data_3)
         df_graph_info_3.date = pd.to_datetime(df_graph_info_3.date)
         df_graph_info_3.to_csv(pr.graph_info_buy_sell_location, index=None)
@@ -95,7 +95,7 @@ event_turn_of_db = threading.Event()
 logic_money = main.LogicMoney(pr.artificial_db_location, event_turn_of_db, event_turn_of_logic, daemon= True)
 art_db_creator = ArtificialDataBaseCreator(pr.initial_date, pr.final_date, event_turn_of_db, event_turn_of_logic, daemon=True)
 
-
+ 
 #comenzar los Threads
 logic_money.start()
 art_db_creator.start()
