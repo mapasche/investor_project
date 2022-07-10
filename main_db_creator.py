@@ -1,3 +1,8 @@
+#muy importnate esto para usar ctrl+c para cerrar el programa
+import os
+os.environ['FOR_DISABLE_CONSOLE_CTRL_HANDLER'] = '1'
+
+
 import parametros as pr
 import pandas as pd
 import time
@@ -13,7 +18,7 @@ from binance.spot import Spot
 class MainDataBaseCreator(threading.Thread):
 
     def __init__ (self, event_turn_of_db, event_turn_of_logic, *arg, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(*arg, **kwargs)
 
         self.client = Spot(key = pr.api_key)
         self.event_turn_of_db = event_turn_of_db
