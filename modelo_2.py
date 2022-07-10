@@ -120,22 +120,16 @@ class Oscilations:
 
                             if curve_regression_x2_value > pr.min_value_x2_curve_regression:
 
-                                wallet.buy_coin(last_exchange_price)
+                                amount_dolar = wallet.buy_coin(last_exchange_price)
 
                                 #set highthreshold
                                 wallet.high_threshold = self.high_threshold_calculator(pr.type_of_low_threshold, last_exchange_price)
 
 
                                 #send the information to graph
-                                df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
-                                df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
-                                new_data = {'date' : [last_date], 'action' : ["buy"], "param0" : [results_OLS_2.params[0]], "param1" : [results_OLS_2.params[2]], "param2" : [results_OLS_2.params[2]]}
-                                append_df = pd.DataFrame(new_data)
-                                append_df.date = pd.to_datetime(append_df.date)
-                                df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
-                                df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
+                                send_information_2_graph(action = "buy", results_x2 = results_OLS_2, last_date = last_date)
 
-                                return "buy"
+                                return "buy", amount_dolar
 
 
                 
@@ -145,18 +139,13 @@ class Oscilations:
 
                             if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
 
-                                wallet.sell_coin(last_exchange_price)
+                                amount_coin = wallet.sell_coin(last_exchange_price)
 
 
-                                df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
-                                df_graph_buy_sell.date = pd.to_datetime(df_graph_buy_sell.date)
-                                new_data = {'date' : [last_date], 'action' : ["sell"], "param0" : [results_OLS_2.params[0]], "param1" : [results_OLS_2.params[2]], "param2" : [results_OLS_2.params[2]]}
-                                append_df = pd.DataFrame(new_data)
-                                append_df.date = pd.to_datetime(append_df.date)
-                                df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
-                                df_graph_buy_sell.to_csv(pr.graph_info_buy_sell_location, index=None)
+                                #send the information to graph
+                                send_information_2_graph(action = "sell", results_x2 = results_OLS_2, last_date = last_date)
                                 
-                                return "sell"
+                                return "sell", amount_coin
 
 
 
@@ -188,12 +177,12 @@ class Oscilations:
 
                         if curve_regression_x2_value > pr.min_value_x2_curve_regression:
 
-                            wallet.buy_coin(last_exchange_price)
+                            amount_dolar = wallet.buy_coin(last_exchange_price)
 
                             #send the information to graph
                             send_information_2_graph(action = "buy", results_x2 = results_OLS_2, last_date = last_date)
 
-                            return "buy"
+                            return "buy", amount_dolar
 
 
                 
@@ -203,12 +192,12 @@ class Oscilations:
 
                             if curve_regression_x2_value < -1 * pr.min_value_x2_curve_regression:
 
-                                wallet.sell_coin(last_exchange_price)
+                                amount_coin = wallet.sell_coin(last_exchange_price)
                                 
                                 #send the information to graph
                                 send_information_2_graph(action = "sell", results_x2 = results_OLS_2, last_date = last_date)
                                 
-                                return "sell"
+                                return "sell", amount_coin
 
 
 
@@ -216,23 +205,16 @@ class Oscilations:
 
                         if wallet.have_coin:
                             
-                            wallet.sell_coin(last_exchange_price)
+                            amount_coin = wallet.sell_coin(last_exchange_price)
 
                             #send the information to graph
                             send_information_2_graph(action = "sell", results_x2 = results_OLS_2, last_date = last_date)
 
-                            return "sell"""                
-
-
-
-
-
-
-
+                            return "sell", amount_coin                
 
 
         #si pasa nada
-        return None
+        return None, None
 
 
 

@@ -14,7 +14,6 @@ class LogicMoney(threading.Thread):
         self.db_location = db_location
         self.event_turn_of_db = event_turn_of_db
         self.event_turn_of_logic = event_turn_of_logic
-        #self.wallet = Wallet()
         self.info_base = InfoBase()
         self.model = md.Oscilations(self.info_base)     
 
@@ -28,7 +27,7 @@ class LogicMoney(threading.Thread):
 
             self.download_db()
             
-            action = self.model.evaluate()
+            action, amount = self.model.evaluate()
 
             last_exchange_price = self.info_base.last_exchange_price
 
@@ -36,18 +35,36 @@ class LogicMoney(threading.Thread):
                 self.info_base.set_total_money()
                 self.upload_action_to_history(action)
 
-            self.upload_graph_info()
+                self.print_sell_buy(action)
+                if action == "buy":
+                    self.buy_coin(amount)
+
+                
+                elif action == "sell":
+                    self.sell_coin(amount)
+
+            #self.upload_graph_info()
 
             #Manda event
             self.event_turn_of_db.set()  
 
     
 
-    """def buy_coin(self, amount_dolar, exchange_price):
-        self.wallet.buy_coin( exchange_price, amount_dolar)
+    def buy_coin(self, amount_dolar):
+        pass
 
-    def sell_coin(self, amount_btc, exchange_price):
-        self.wallet.sell_coin(exchange_price, amount_btc)"""
+
+    def sell_coin(self, amount_btc):
+        pass
+
+
+    def print_sell_buy(self, action):
+        print(f"Action: {action} \t Total money: {self.info_base.total_money} \t Date: {self.info_base.last_date()}\n")
+        print(f"Total dolar: {round(self.info_base.total_dolar, 4)} \t Total coin: {round(self.info_base.total_coin, 4)}\n")
+        for i, wallet in enumerate(self.info_base.wallets):
+            print(f"Wallet {i}: \t Dolar: {round(self.info_base.total_dolar, 4)} \t Coin: {round(self.info_base.total_coin, 4)}\n")
+        print(f"\n\n")
+
 
     def download_db(self):
         self.info_base.df = pd.read_csv(pr.artificial_db_location)

@@ -91,7 +91,7 @@ class InfoWallet(Wallet):
         self.confirm_have_coin()
         self.last_bought_price = exchange_price
 
-        return amount_coin
+        return amount_dolar
 
     def sell_coin(self,  exchange_price, amount_coin = -1):
         if amount_coin == -1:
@@ -110,7 +110,7 @@ class InfoWallet(Wallet):
         self.last_bought_price = -1
         self.confirm_have_coin()
 
-        return amount_dolar
+        return amount_coin
 
 
 

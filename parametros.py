@@ -1,16 +1,25 @@
 import datetime as dt
 
+api_key = 'PrRyANe2JGfKdI8doWUbJ4QTqSGb534D10u6R5PNuArbQlwtvr9g9hnzJ05tD8X3'
+
+
+
 interest_percent = 0.1
 with_interest = False
 graph_with_volume = False
 
+
 #location of archives
 db_location = "datos/info.csv"
-artificial_db_location = "datos/info_art.csv"
+
 buy_sell_history_location = "resultados/buy_sell_history.txt"
 graph_info_location = "resultados/graph_info.csv"
 graph_info_buy_sell_location = "resultados/graph_info_buy_sell.csv"
 graph_location = "resultados/graph.png"
+
+main_db_location = "datos/info_2.csv"
+artificial_db_location = "datos/info_2.csv"
+#artificial_db_location = "datos/info_art.csv"
 
 #año - mes - dia - hora - minuto
 initial_date = dt.datetime(2022, 7, 6, 12)
