@@ -43,7 +43,7 @@ class LogicMoney(threading.Thread):
                 elif action == "sell":
                     self.sell_coin(amount)
 
-            #self.upload_graph_info()
+            self.upload_graph_info()
 
             #Manda event
             self.event_turn_of_db.set()  

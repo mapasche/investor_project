@@ -5,6 +5,7 @@ import numpy as np
 import parametros as pr
 from datetime import datetime, timedelta
 from matplotlib.dates import date2num, HourLocator, MinuteLocator, DayLocator, MonthLocator, AutoDateLocator, AutoDateFormatter
+from matplotlib.ticker import AutoMinorLocator
 from sklearn.preprocessing import PolynomialFeatures
 import statsmodels.api as sm
 
@@ -16,9 +17,9 @@ def dolar_2_coin(amount_dolar, market_price_in_dolar):
     return amount_dolar / market_price_in_dolar
 
 
-def send_information_2_graph(action, results_x2, last_date):
+def send_information_2_graph(action, results_x2, porcentual_dif, last_date):
     df_graph_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location, parse_dates=['date'])
-    new_data = {'date' : [last_date], 'action' : [action], "param0" : [results_x2.params[0]], "param1" : [results_x2.params[1]], "param2" : [results_x2.params[2]]}
+    new_data = {'date' : [last_date], 'action' : [action], "param0" : [results_x2.params[0]], "param1" : [results_x2.params[1]], "param2" : [results_x2.params[2]], "porcentual_dif" : [porcentual_dif]}
     append_df = pd.DataFrame(new_data)
     append_df.date = pd.to_datetime(append_df.date)
     df_graph_buy_sell = df_graph_buy_sell.append(append_df, ignore_index=True)
@@ -39,12 +40,10 @@ def show_final_graph():
     #descargamos la informacion
     df = pd.read_csv(pr.artificial_db_location, parse_dates=["date"])
     df['time'] = np.arange(len(df.date))
-    df_graph = pd.read_csv("resultados/graph_info.csv")
-    df_graph.date = pd.to_datetime(df_graph.date)
-    df_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location)
-    df_buy_sell.date = pd.to_datetime(df_buy_sell.date)
-    init_date = df.date.iloc[0]
-    last_date = df.date.iloc[-1]
+    df_graph = pd.read_csv(pr.graph_info_location, parse_dates=["date"])
+    df_buy_sell = pd.read_csv(pr.graph_info_buy_sell_location, parse_dates=["date"])
+    init_date = pr.initial_date
+    last_date = pr.final_date
 
 
     if pr.graph_with_volume:
@@ -73,7 +72,7 @@ def show_final_graph():
         axs.plot_date(x = df.date, y = df.price, linestyle='-', markersize = 0.01, label="Price")
         axs.plot_date(x= df_graph.date, y = df_graph.average, linestyle='-', markersize = 0.01, label="MA")
         axs.plot_date(x= df_graph.date, y = df_graph.low_threshold, linestyle='-', markersize = 0.01, label="MA - Interest")
-        setear_visualizador_eje_x(axs, init_date, last_date)
+        
 
         #vertical lines of buy and sell
         df_buy_sell.apply(lambda row: axs.axvline(x=row.date, linewidth=1, color="red") if row.action == "buy" else axs.axvline(x=row.date, linewidth=1, color="green") , axis=1)
@@ -84,14 +83,16 @@ def show_final_graph():
             axs.plot_date(x = data.date, y = y_pred, linestyle='-', markersize = 0.01, color="purple", alpha = 0.5)
 
         axs.grid(True)
-        
+
+        #axs.set_ylim([21150, 21400])
+        setear_visualizador_eje_x(axs, init_date, last_date)
     
 
 
     #legends
     #fig = plt.gcf()
     figure.legend(loc=1)
-    figure.tight_layout()
+    #figure.tight_layout()
     #plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
 
     plot_save(pr.graph_location)
@@ -133,10 +134,13 @@ def setear_visualizador_eje_x(ax, init_date, last_date):
 
     #setear el visualizador del eje x
     if last_date - init_date <= timedelta(hours=1):
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_locator(MinuteLocator(byminute=(0, 15, 30, 45)))
     elif last_date - init_date <= timedelta(hours=2):
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_locator(MinuteLocator(byminute=(0, 30)))
     elif last_date - init_date <= timedelta(hours=3):
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_locator(HourLocator(byhour=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ,20 ,21, 22, 23)))
     elif last_date - init_date <= timedelta(hours=6):
         ax.xaxis.set_major_locator(HourLocator(byhour=(0, 2, 4, 6, 8, 10, 12, 14, 16, 18 , 20, 22)))
@@ -160,8 +164,8 @@ def plot_labels ():
     plt.title("USD-BTC")
 
 def plot_size ():
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(15, 15))
 
 def plot_save( direction ):
-    plt.savefig(direction, dpi = 1000)
+    plt.savefig(direction, dpi = 1500)
 

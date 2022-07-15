@@ -50,7 +50,7 @@ class ArtificialDataBaseCreator(threading.Thread):
             archive.write("")
         
         #Create graph info buy sell
-        data_3 = {'date' : [], 'action' : [], "param1" : [], "param2" : [], "param3" : []}
+        data_3 = {'date' : [], 'action' : [], "param0" : [], "param1" : [], "param2" : [], "porcentual_dif" : []}
         df_graph_info_3 = pd.DataFrame(data_3)
         df_graph_info_3.date = pd.to_datetime(df_graph_info_3.date)
         df_graph_info_3.to_csv(pr.graph_info_buy_sell_location, index=None)

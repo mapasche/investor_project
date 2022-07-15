@@ -61,7 +61,15 @@ class InfoWallet(Wallet):
         #self.comprar_vender = False
         self.low_threshold = 0
         self.last_bought_price = -1
+        self.last_sell_date = None
+        self.can_buy = True
         self.confirm_have_coin()
+
+    def set_wallet_cant_buy (self):
+        self.can_buy = False
+    
+    def set_wallet_can_buy (self):
+        self.can_buy = True
 
     def confirm_have_coin(self):
         if self.amount_coin > pr.epsilon:
@@ -84,16 +92,17 @@ class InfoWallet(Wallet):
             amount_dolar_with_interest = amount_dolar - amount_dolar * pr.interest_percent / 100
         else:
             amount_dolar_with_interest = amount_dolar
-        
+        self.last_bought_price = exchange_price
+        self.last_sell_date = None
         amount_coin = dolar_2_coin(amount_dolar_with_interest, exchange_price)
         self.amount_dolar -= amount_dolar
         self.amount_coin += amount_coin
         self.confirm_have_coin()
-        self.last_bought_price = exchange_price
-
+        
         return amount_dolar
 
-    def sell_coin(self,  exchange_price, amount_coin = -1):
+
+    def sell_coin(self,  exchange_price, last_date = None, amount_coin = -1):
         if amount_coin == -1:
             amount_coin = self.amount_coin
         
@@ -108,6 +117,7 @@ class InfoWallet(Wallet):
         self.amount_coin -= amount_coin
 
         self.last_bought_price = -1
+        self.last_sell_date = last_date
         self.confirm_have_coin()
 
         return amount_coin
@@ -124,6 +134,8 @@ class InfoBase:
         self.total_dolar = 0
         self.total_coin = 0
         self.total_money = self.set_total_money()
+        self.last_exchange_price = None
+        self.last_exchange_date = None
 
     @property
     def df(self):
@@ -160,6 +172,12 @@ class InfoBase:
             self.last_exchange_price = self.df.iloc[-1].price
         except Exception as e:
             return e
+
+    def set_last_exchange_date (self):
+        try:
+            self.last_exchange_date = self.df.iloc[-1].date
+        except Exception as e:
+            return e
     
     def mean_in_dates (self, init_date, last_date = dt.datetime.now()):
         try:
@@ -182,6 +200,20 @@ class InfoBase:
 
     def lowest_threshold (self):  
         return min(self.wallets, key= lambda x: x.low_threshold).low_threshold
+
+    def check_wallet_can_buy(self):
+        self.set_last_exchange_date()
+
+        for wallet in self.wallets:
+
+            if not wallet.last_sell_date == None:
+                amount_time_pass = self.last_exchange_date - wallet.last_sell_date
+
+                if amount_time_pass >= pr.time_not_buy:
+                    wallet.set_wallet_can_buy()
+                else:
+                    wallet.set_wallet_cant_buy()
+
 
 
 
